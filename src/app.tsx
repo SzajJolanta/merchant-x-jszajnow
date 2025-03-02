@@ -1,6 +1,6 @@
 import "./app.css";
 import config from "root/config";
-import MyProducts from "./components/MyProducts";
+import ProductsPage from "./pages/ProductPage";
 
 export function App() {
   return (
@@ -11,7 +11,7 @@ export function App() {
         <h2>Relay Pool</h2>
         {config.relays.map((relay: string) => <p key={relay}>{relay}</p>)}
       </div>
-      <MyProducts />
+      <ProductsPage />
     </>
   );
 }

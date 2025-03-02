@@ -4,8 +4,8 @@ import { useEffect, useState } from "preact/hooks";
 
 const ndk = await getNdk();
 
-const useRelaySub = () => {
-    const [products, setProducts] = useState<Set<NostrEvent>>(new Set());
+const useProductSubscription = () => {
+    const [products, setProducts] = useState<Set<NostrEvent>>(new Set()); // TODO: Hoist to context
 
     useEffect(() => {
         console.log("Subscribing to events");
@@ -33,4 +33,4 @@ const useRelaySub = () => {
     }
 }
 
-export default useRelaySub;
+export default useProductSubscription;

@@ -1,5 +1,5 @@
 import { DEFAULT_RELAYS } from "@/utils/constants";
-import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import NDK, { NDKNip07Signer } from "@nostr-dev-kit/ndk";
 
 export class NDKService {
     private static instance: NDKService | null = null;
@@ -17,14 +17,9 @@ export class NDKService {
     public initialize(relayPool: string[]): Promise<NDK> {
         if (this.ndk) return Promise.resolve(this.ndk);
 
-        // if (!process.env.PRIVKEY) throw new Error("PRIVKEY not found in .env");
-
-        // const privkey = process.env.PRIVKEY;
-        // const signer = new NDKPrivateKeySigner(privkey);
-
         this.ndk = new NDK({
             explicitRelayUrls: relayPool,
-            // signer,
+            signer: new NDKNip07Signer(),
         });
 
         return new Promise((resolve, reject) => {
