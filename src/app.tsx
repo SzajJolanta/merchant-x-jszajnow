@@ -1,5 +1,5 @@
 import "./app.css";
-import config from "root/config";
+import config from "@root/config";
 import ProductsPage from "./pages/ProductPage";
 
 export function App() {
