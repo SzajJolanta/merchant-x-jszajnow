@@ -1,13 +1,5 @@
 import React from "react";
-import {
-    getProductId,
-    getProductImages,
-    getProductPrice,
-    getProductStock,
-    getProductSummary,
-    getProductTitle,
-    ProductListing,
-} from "nostr-commerce-schema";
+import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 interface ProductCardProps {
     event: ProductListing;
@@ -18,12 +10,12 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = (
     { event, onEdit, onDelete },
 ) => {
-    const id = getProductId(event);
-    const title = getProductTitle(event);
-    const price = getProductPrice(event);
-    const images = getProductImages(event);
-    const stock = getProductStock(event);
-    const summary = getProductSummary(event);
+    const id = ProductListingUtils.getProductId(event);
+    const title = ProductListingUtils.getProductTitle(event);
+    const price = ProductListingUtils.getProductPrice(event);
+    const images = ProductListingUtils.getProductImages(event);
+    const stock = ProductListingUtils.getProductStock(event);
+    const summary = ProductListingUtils.getProductSummary(event);
 
     // If any required field is missing, don't render the card
     if (!id || !title || !price) {

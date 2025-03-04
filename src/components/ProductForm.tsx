@@ -1,22 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import {
-    createProductTags,
-    getProductCategories,
-    getProductDimensions,
-    getProductId,
-    getProductImages,
-    getProductPrice,
-    getProductSpecs,
-    getProductStock,
-    getProductSummary,
-    getProductTitle,
-    getProductType,
-    getProductVisibility,
-    getProductWeight,
-    ProductListing,
-} from "nostr-commerce-schema";
+import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 interface ProductFormProps {
     event?: ProductListing;
@@ -100,24 +85,29 @@ const ProductForm: React.FC<ProductFormProps> = (
     // If an event is provided, populate form with its data
     useEffect(() => {
         if (event) {
-            const id = getProductId(event) || uuidv4();
-            const title = getProductTitle(event) || "";
-            const price = getProductPrice(event) ||
+            const id = ProductListingUtils.getProductId(event) || uuidv4();
+            const title = ProductListingUtils.getProductTitle(event) || "";
+            const price = ProductListingUtils.getProductPrice(event) ||
                 { amount: "--", currency: "USD" };
-            const summary = getProductSummary(event) || "";
+            const summary = ProductListingUtils.getProductSummary(event) || "";
             const content = event.content || "";
-            const stock = getProductStock(event)?.toString() || "";
-            const type = getProductType(event) ||
+            const stock =
+                ProductListingUtils.getProductStock(event)?.toString() || "";
+            const type = ProductListingUtils.getProductType(event) ||
                 { type: "simple", physicalType: "physical" };
-            const visibility = getProductVisibility(event) || "on-sale";
-            const images = getProductImages(event) || [];
-            const weight = getProductWeight(event) || { value: "", unit: "kg" };
-            const dimensions = getProductDimensions(event) ||
+            const visibility =
+                ProductListingUtils.getProductVisibility(event) || "on-sale";
+            const images = ProductListingUtils.getProductImages(event) || [];
+            const weight = ProductListingUtils.getProductWeight(event) ||
+                { value: "", unit: "kg" };
+            const dimensions =
+                ProductListingUtils.getProductDimensions(event) ||
                 { dimensions: "", unit: "cm" };
-            const categories = getProductCategories(event) || [];
+            const categories =
+                ProductListingUtils.getProductCategories(event) || [];
 
             // Convert specs object to array of {key, value} objects
-            const specsObj = getProductSpecs(event);
+            const specsObj = ProductListingUtils.getProductSpecs(event);
             const specs = Object.entries(specsObj).map(([key, value]) => ({
                 key,
                 value,
@@ -195,7 +185,7 @@ const ProductForm: React.FC<ProductFormProps> = (
 
         try {
             // Convert form data to tags format
-            const tags = createProductTags({
+            const tags = ProductListingUtils.createProductTags({
                 id: formData.id,
                 title: formData.title,
                 price: {

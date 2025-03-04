@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useProductStore } from "@/stores/useProductStore";
 import ProductCard from "@/components/ProductCard";
 import ProductForm from "@/components/ProductForm";
-import { getProductId, ProductListing } from "nostr-commerce-schema";
+import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 const ProductLayout: React.FC = () => {
     const {
@@ -61,7 +61,7 @@ const ProductLayout: React.FC = () => {
     ) => {
         if (editEvent) {
             // Get the product ID
-            const id = getProductId(editEvent);
+            const id = ProductListingUtils.getProductId(editEvent);
             if (!id) {
                 handleProductCreate(tags, content);
                 return;
@@ -138,7 +138,9 @@ const ProductLayout: React.FC = () => {
     // Extract NostrEvents from products
     const productEvents = sortedProducts.map((product) => {
         return {
-            id: getProductId({ tags: product.tags } as ProductListing) || "",
+            id: ProductListingUtils.getProductId(
+                { tags: product.tags } as ProductListing,
+            ) || "",
             content: product.content,
             tags: product.tags,
             created_at: product.created_at,

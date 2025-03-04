@@ -1,18 +1,6 @@
 import React, { useState } from "react";
 import { NostrEvent } from "@nostr-dev-kit/ndk";
-import {
-    getProductCategories,
-    getProductDimensions,
-    getProductId,
-    getProductImages,
-    getProductPrice,
-    getProductSpecs,
-    getProductStock,
-    getProductSummary,
-    getProductTitle,
-    getProductType,
-    getProductWeight,
-} from "nostr-commerce-schema";
+import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 interface ProductDetailProps {
     event: NostrEvent;
@@ -26,17 +14,39 @@ const ProductDetail: React.FC<ProductDetailProps> = (
     const [selectedImage, setSelectedImage] = useState<number>(0);
 
     // Extract product details
-    const id = getProductId(event);
-    const title = getProductTitle(event);
-    const price = getProductPrice(event);
-    const images = getProductImages(event);
-    const stock = getProductStock(event);
-    const summary = getProductSummary(event);
-    const specs = getProductSpecs(event);
-    const weight = getProductWeight(event);
-    const dimensions = getProductDimensions(event);
-    const categories = getProductCategories(event);
-    const type = getProductType(event);
+    const id = ProductListingUtils.getProductId(
+        event as unknown as ProductListing,
+    );
+    const title = ProductListingUtils.getProductTitle(
+        event as unknown as ProductListing,
+    );
+    const price = ProductListingUtils.getProductPrice(
+        event as unknown as ProductListing,
+    );
+    const images = ProductListingUtils.getProductImages(
+        event as unknown as ProductListing,
+    );
+    const stock = ProductListingUtils.getProductStock(
+        event as unknown as ProductListing,
+    );
+    const summary = ProductListingUtils.getProductSummary(
+        event as unknown as ProductListing,
+    );
+    const specs = ProductListingUtils.getProductSpecs(
+        event as unknown as ProductListing,
+    );
+    const weight = ProductListingUtils.getProductWeight(
+        event as unknown as ProductListing,
+    );
+    const dimensions = ProductListingUtils.getProductDimensions(
+        event as unknown as ProductListing,
+    );
+    const categories = ProductListingUtils.getProductCategories(
+        event as unknown as ProductListing,
+    );
+    const type = ProductListingUtils.getProductType(
+        event as unknown as ProductListing,
+    );
 
     // If any required field is missing, don't render
     if (!id || !title || !price) {

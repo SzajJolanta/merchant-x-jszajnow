@@ -4,7 +4,7 @@ import { useProductStore } from "@/stores/useProductStore";
 import ProductLayout from "@/layouts/ProductLayout";
 import ProductDetail from "@/components/ProductDetail";
 import ProductForm from "@/components/ProductForm";
-import { getProductId } from "nostr-commerce-schema";
+import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 const ProductsPage: React.FC = () => {
     const { createProduct, updateProduct } = useProductStore();
@@ -37,7 +37,9 @@ const ProductsPage: React.FC = () => {
     const handleFormSubmit = async (tags: string[][], content: string) => {
         if (selectedEvent) {
             // Update existing product
-            const id = getProductId(selectedEvent);
+            const id = ProductListingUtils.getProductId(
+                selectedEvent as unknown as ProductListing,
+            );
             if (!id) {
                 console.error("Cannot update: missing product ID");
                 return;
