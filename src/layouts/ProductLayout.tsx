@@ -320,7 +320,9 @@ const ProductLayout: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {productEvents.map((event) => (
                     <ProductCard
-                        key={`${getProductId(event)}-${event.created_at}`}
+                        key={`${
+                            ProductListingUtils.getProductId(event)
+                        }-${event.created_at}`}
                         event={event}
                         onEdit={handleEditClick}
                         onDelete={handleDeleteClick}

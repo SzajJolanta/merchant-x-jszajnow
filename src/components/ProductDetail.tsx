@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { NostrEvent } from "@nostr-dev-kit/ndk";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
+const PLACEHOLDER_IMAGE = "/placeholder-product.png";
+
 interface ProductDetailProps {
     event: NostrEvent;
     onEdit: (event: NostrEvent) => void;
@@ -12,6 +14,7 @@ const ProductDetail: React.FC<ProductDetailProps> = (
     { event, onEdit, onBack },
 ) => {
     const [selectedImage, setSelectedImage] = useState<number>(0);
+    const [imageError, setImageError] = useState(false);
 
     // Extract product details
     const id = ProductListingUtils.getProductId(
@@ -68,9 +71,9 @@ const ProductDetail: React.FC<ProductDetailProps> = (
     const formattedPrice = `${price.amount}, ${price.currency}, ${
         price.frequency ?? ""
     }`.trim();
-    const mainImage = images.length > 0
-        ? images[selectedImage].url
-        : "/placeholder-product.png";
+    const mainImage = images.length > 0 && !imageError
+        ? images[0].url
+        : PLACEHOLDER_IMAGE;
 
     const handleEdit = () => {
         onEdit(event);
@@ -108,10 +111,8 @@ const ProductDetail: React.FC<ProductDetailProps> = (
                                 src={mainImage}
                                 alt={title}
                                 className="absolute inset-0 w-full h-full object-contain p-4"
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).src =
-                                        "/placeholder-product.png";
-                                }}
+                                onError={() => setImageError(true)}
+                                loading="lazy"
                             />
                         </div>
 
@@ -131,11 +132,8 @@ const ProductDetail: React.FC<ProductDetailProps> = (
                                             src={image.url}
                                             alt={`${title} - image ${idx + 1}`}
                                             className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement)
-                                                    .src =
-                                                        "/placeholder-product.png";
-                                            }}
+                                            onError={() => setImageError(true)}
+                                            loading="lazy"
                                         />
                                     </button>
                                 ))}

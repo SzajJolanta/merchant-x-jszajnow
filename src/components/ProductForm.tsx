@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 interface ProductFormProps {
@@ -46,7 +44,7 @@ interface FormState {
 }
 
 const initialState: FormState = {
-    id: uuidv4(),
+    id: ProductListingUtils.generateProductId(),
     title: "",
     price: {
         amount: "",
@@ -85,7 +83,9 @@ const ProductForm: React.FC<ProductFormProps> = (
     // If an event is provided, populate form with its data
     useEffect(() => {
         if (event) {
-            const id = ProductListingUtils.getProductId(event) || uuidv4();
+            const id = ProductListingUtils.getProductId(event);
+            if (!id) throw new Error("Product ID is required");
+
             const title = ProductListingUtils.getProductTitle(event) || "";
             const price = ProductListingUtils.getProductPrice(event) ||
                 { amount: "--", currency: "USD" };

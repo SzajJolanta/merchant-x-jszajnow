@@ -26,6 +26,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
         try {
             const ndk = await getNdk();
             const subscription = ndk.subscribe({ kinds: [30402] });
+            // TODO: Only fetch products from the Merchant Npub
 
             subscription.on("event", (event: NDKEvent) => {
                 try {

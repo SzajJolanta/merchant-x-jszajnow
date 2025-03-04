@@ -11,7 +11,7 @@ const useProductSubscription = () => {
         console.log("Subscribing to events");
 
         const subscription = ndk.subscribe({
-            kinds: [30018, 30402]
+            kinds: [30402]
         });
 
         subscription.on("event", (event: NDKEvent) => {
