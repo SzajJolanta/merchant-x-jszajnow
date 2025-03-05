@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
+import { useAccountStore } from "@/stores/useAccountStore";
 
 interface ProductFormProps {
     event?: ProductListing;
@@ -44,7 +45,7 @@ interface FormState {
 }
 
 const initialState: FormState = {
-    id: ProductListingUtils.generateProductId(),
+    id: "",
     title: "",
     price: {
         amount: "",
@@ -75,7 +76,13 @@ const initialState: FormState = {
 const ProductForm: React.FC<ProductFormProps> = (
     { event, onSubmit, onCancel },
 ) => {
-    const [formData, setFormData] = useState<FormState>(initialState);
+    const { user } = useAccountStore();
+    if (!user) throw new Error("[ProductForm]: Not logged in!");
+
+    const [formData, setFormData] = useState<FormState>({
+        ...initialState,
+        id: ProductListingUtils.generateProductId(),
+    });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [currentTab, setCurrentTab] = useState("basic");
@@ -83,8 +90,8 @@ const ProductForm: React.FC<ProductFormProps> = (
     // If an event is provided, populate form with its data
     useEffect(() => {
         if (event) {
-            const id = ProductListingUtils.getProductId(event);
-            if (!id) throw new Error("Product ID is required");
+            const id = ProductListingUtils.getProductId(event) ||
+                ProductListingUtils.generateProductId();
 
             const title = ProductListingUtils.getProductTitle(event) || "";
             const price = ProductListingUtils.getProductPrice(event) ||
@@ -329,9 +336,13 @@ const ProductForm: React.FC<ProductFormProps> = (
 
     return (
         <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className="text-2xl font-bold">
                 {event ? "Edit Product" : "Create New Product"}
             </h2>
+
+            <p className="block text-xs font-medium text-gray-700">
+                {formData.id}
+            </p>
 
             {/* Tab Navigation */}
             <div className="border-b border-gray-200 mb-6">

@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
+
+const PLACEHOLDER_IMAGE = "/placeholder-product.png";
 
 interface ProductCardProps {
     event: ProductListing;
@@ -10,6 +12,8 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = (
     { event, onEdit, onDelete },
 ) => {
+    const [imageError, setImageError] = useState(false);
+
     const id = ProductListingUtils.getProductId(event);
     const title = ProductListingUtils.getProductTitle(event);
     const price = ProductListingUtils.getProductPrice(event);
@@ -25,10 +29,9 @@ const ProductCard: React.FC<ProductCardProps> = (
     const formattedPrice = `${price.amount}, ${price.currency}, ${
         price.frequency ?? ""
     }`.trim();
-    const mainImage = images.length > 0
+    const mainImage = images.length > 0 && !imageError
         ? images[0].url
-        : "/placeholder-product.png";
-
+        : PLACEHOLDER_IMAGE;
     const handleEdit = () => {
         onEdit(event);
     };
@@ -49,11 +52,8 @@ const ProductCard: React.FC<ProductCardProps> = (
                     src={mainImage}
                     alt={title}
                     className="absolute top-0 left-0 w-full h-full object-cover"
-                    onError={(e) => {
-                        // Fallback for failed image loads
-                        (e.target as HTMLImageElement).src =
-                            "/placeholder-product.png";
-                    }}
+                    onError={() => setImageError(true)}
+                    loading="lazy"
                 />
                 {stock !== null && stock <= 5 && stock > 0 && (
                     <span className="absolute top-2 right-2 bg-amber-500  text-xs font-bold px-2 py-1 rounded">
