@@ -5,7 +5,7 @@ import { ProductListing, validateProductListing } from 'nostr-commerce-schema';
 
 
 interface ProductState {
-    products: Map<string, ProductListing>;
+    products: Map<string, ProductListing & { eventId?: string }>;
     isLoading: boolean;
     error: string | null;
 
@@ -17,7 +17,7 @@ interface ProductState {
 }
 
 export const useProductStore = create<ProductState>((set, get) => ({
-    products: new Map<string, ProductListing>(),
+    products: new Map<string, ProductListing & { eventId?: string }>(),
     isLoading: false,
     error: null,
 
@@ -33,6 +33,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
                     console.log("Received event:", event);
                     const rawEvent = event.rawEvent();
                     // Parse the event content and tags
+                    const eventId = event.id || rawEvent.id;
                     const content = rawEvent.content;
                     const tags = rawEvent.tags;
 
@@ -44,6 +45,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
 
                     // Construct product object
                     const product = {
+                        id: eventId,
                         kind: 30402,
                         created_at: rawEvent.created_at || Math.floor(Date.now() / 1000),
                         content,
@@ -57,7 +59,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
 
                         // Add to store
                         set(state => ({
-                            products: new Map(state.products).set(productId, validatedProductZodObj.data)
+                            products: new Map(state.products).set(productId, { ...validatedProductZodObj.data, eventId })
                         }));
                     } catch (validationError) {
                         console.error("Invalid product data:", validationError);
@@ -187,10 +189,11 @@ export const useProductStore = create<ProductState>((set, get) => ({
             const ndk = await getNdk();
             const event = new NDKEvent(ndk);
 
+            const eventId = existingProduct.eventId!;
             event.kind = 5; // Deletion event kind
             event.content = '';
             event.tags = [
-                ['e', id], // Event to delete
+                ['e', eventId], // Event to delete
                 ['k', '30402'] // Kind to delete
             ];
 
