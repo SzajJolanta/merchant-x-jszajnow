@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { NostrEvent } from "@nostr-dev-kit/ndk";
 import { useProductStore } from "@/stores/useProductStore";
-import ProductEditorLayout from "@/layouts/ProductEditorLayout";
-import ProductDetail from "@/components/ProductDetail";
-import ProductForm from "@/components/ProductForm";
+import ProductEditorLayout from "@/layouts/products/ProductEditorLayout";
+import ProductDetail from "@/components/product/ProductDetail";
+import ProductForm from "@/components/product/ProductForm";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 const ProductsLayout: React.FC = () => {

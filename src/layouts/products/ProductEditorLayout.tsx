@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useProductStore } from "@/stores/useProductStore";
-import ProductCard from "@/components/ProductCard";
-import ProductForm from "@/components/ProductForm";
+import ProductCard from "@/components/product/ProductCard";
+import ProductForm from "@/components/product/ProductForm";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
 const ProductEditorLayout: React.FC = () => {
@@ -320,9 +320,8 @@ const ProductEditorLayout: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {productEvents.map((event) => (
                     <ProductCard
-                        key={`${
-                            ProductListingUtils.getProductId(event)
-                        }-${event.created_at}`}
+                        key={`${ProductListingUtils.getProductId(event)
+                            }-${event.created_at}`}
                         event={event}
                         onEdit={handleEditClick}
                         onDelete={handleDeleteClick}

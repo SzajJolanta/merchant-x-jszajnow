@@ -1,16 +1,18 @@
 import "./app.css";
-import ProductsLayout from "./layouts/ProductsLayout";
-import LoginLayout from "./layouts/LoginLayout";
+import ProductsLayout from "./layouts/products/ProductsLayout";
+import LoginLayout from "./layouts/login/LoginLayout";
 import Header from "./components/Header";
-import ShippingOptionsLayout from "./layouts/ShippingOptionsLayout";
-import RelayPoolsLayout from "./layouts/RelayPoolsLayout";
+import ShippingOptionsLayout from "./layouts/store/ShippingOptionsLayout";
+import RelayPoolsLayout from "./layouts/store/RelayPoolsLayout";
 import Sidebar from "@/components/Sidebar";
+import MainArea from "./layouts/MainArea";
 
 export function App() {
   return (
     <LoginLayout>
       <Header />
       <Sidebar />
+      <MainArea />
     </LoginLayout>
   );
 }
