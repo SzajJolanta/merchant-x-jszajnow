@@ -62,9 +62,10 @@ const Header: React.FC = () => {
         <section className="header h-[var(--header-height)] w-screen mx-auto px-4 flex justify-between items-center border-b-2">
             {/* Logo/Title */}
             <div className="flex items-center">
-                <h1 className="text-xl font-bold text-gray-800">
-                    Merchant Experience
+                <h1 className="text-xl font-bold text-gray-800 mr-2">
+                    {`Merchant Portal`}
                 </h1>
+                <h5>{`Powered by Conduit`}</h5>
             </div>
 
             {/* Account Component */}
@@ -89,9 +90,8 @@ const Header: React.FC = () => {
 
                             {/* Dropdown Arrow */}
                             <svg
-                                className={`w-4 h-4 transition-transform ${
-                                    dropdownOpen ? "rotate-180" : ""
-                                }`}
+                                className={`w-4 h-4 transition-transform ${dropdownOpen ? "rotate-180" : ""
+                                    }`}
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
