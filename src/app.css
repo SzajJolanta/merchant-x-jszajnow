@@ -11,27 +11,34 @@
   --dark-text-disabled: #666666;
   --dark-divider: #424242;
 
+  --header-height: 4rem;
+  --header-bg: #111;
+
   /* Accent colors */
-  --accent-primary: #6366f1;  /* indigo-600 */
-  --accent-primary-hover: #4f46e5;  /* indigo-700 */
-  --accent-secondary: #4b5563;  /* gray-600 */
-  --accent-secondary-hover: #374151;  /* gray-700 */
+  --accent-primary: #6366f1;
+  /* indigo-600 */
+  --accent-primary-hover: #4f46e5;
+  /* indigo-700 */
+  --accent-secondary: #4b5563;
+  /* gray-600 */
+  --accent-secondary-hover: #374151;
+  /* gray-700 */
 
   /* Status colors */
-  --dark-success: #10b981;  /* emerald-500 */
-  --dark-warning: #f59e0b;  /* amber-500 */
-  --dark-error: #ef4444;  /* red-500 */
-  --dark-info: #3b82f6;  /* blue-500 */
+  --dark-success: #10b981;
+  /* emerald-500 */
+  --dark-warning: #f59e0b;
+  /* amber-500 */
+  --dark-error: #ef4444;
+  /* red-500 */
+  --dark-info: #3b82f6;
+  /* blue-500 */
 }
 
 /* Base styles */
 body {
   background-color: var(--dark-bg);
   color: var(--dark-text-primary);
-}
-
-.container {
-  background-color: var(--dark-bg);
 }
 
 /* Card styles */
@@ -47,7 +54,12 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .text-gray-900,
 .font-bold,
 .font-semibold,
@@ -168,22 +180,29 @@ tr:nth-child(even) {
 }
 
 /* Status indicators */
-.bg-red-500, .text-red-600, .bg-red-100, .text-red-700 {
+.bg-red-500,
+.text-red-600,
+.bg-red-100,
+.text-red-700 {
   background-color: var(--dark-error) !important;
   color: white !important;
 }
 
-.bg-amber-500, .bg-amber-100, .text-amber-800 {
+.bg-amber-500,
+.bg-amber-100,
+.text-amber-800 {
   background-color: var(--dark-warning) !important;
   color: black !important;
 }
 
-.bg-green-100, .text-green-800 {
+.bg-green-100,
+.text-green-800 {
   background-color: var(--dark-success) !important;
   color: white !important;
 }
 
-.bg-blue-100, .text-blue-800 {
+.bg-blue-100,
+.text-blue-800 {
   background-color: var(--dark-info) !important;
   color: white !important;
 }
@@ -195,7 +214,8 @@ tr:nth-child(even) {
 
 /* Price text */
 .text-indigo-600 {
-  color: #818cf8 !important;  /* A brighter indigo for better visibility on dark */
+  color: #818cf8 !important;
+  /* A brighter indigo for better visibility on dark */
 }
 
 /* Header and footer */
@@ -255,11 +275,6 @@ footer.bg-white {
 /* No products found state */
 .text-center.py-12 svg {
   color: var(--dark-text-disabled) !important;
-}
-
-/* Main content area */
-.container.mx-auto.px-4.py-8 {
-  background-color: var(--dark-bg) !important;
 }
 
 /* Override image backgrounds */

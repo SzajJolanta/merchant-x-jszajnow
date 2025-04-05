@@ -4,7 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import ProductForm from "@/components/ProductForm";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
-const ProductLayout: React.FC = () => {
+const ProductEditorLayout: React.FC = () => {
     const {
         products,
         isLoading,
@@ -151,7 +151,7 @@ const ProductLayout: React.FC = () => {
 
     if (showForm) {
         return (
-            <div className="container mx-auto px-4 py-8">
+            <div className="mx-auto px-4 py-8">
                 <ProductForm
                     event={editEvent}
                     onSubmit={handleFormSubmit}
@@ -162,7 +162,7 @@ const ProductLayout: React.FC = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <h1 className="text-3xl font-bold text-gray-900">Products</h1>
 
@@ -333,4 +333,4 @@ const ProductLayout: React.FC = () => {
     );
 };
 
-export default ProductLayout;
+export default ProductEditorLayout;
