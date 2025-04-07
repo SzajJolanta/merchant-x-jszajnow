@@ -80,7 +80,7 @@ const ProductDetail: React.FC<ProductDetailProps> = (
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="mx-auto px-4 py-8">
             <button
                 onClick={onBack}
                 className="inline-flex items-center mb-6 text-indigo-600 hover:text-indigo-900"

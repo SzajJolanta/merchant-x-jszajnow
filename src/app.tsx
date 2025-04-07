@@ -1,18 +1,45 @@
 import "./app.css";
-import config from "@root/config";
-import ProductsPage from "./pages/ProductPage";
-import LoginLayout from "./layouts/LoginLayout";
+import ProductsLayout from "./layouts/products/ProductsLayout";
+import LoginLayout from "./layouts/login/LoginLayout";
 import Header from "./components/Header";
+import ShippingOptionsLayout from "./layouts/store/ShippingOptionsLayout";
+import RelayPoolsLayout from "./layouts/store/RelayPoolsLayout";
+import Sidebar from "@/components/Sidebar";
+import MainArea from "./layouts/MainArea";
 
 export function App() {
   return (
     <LoginLayout>
       <Header />
-      <ProductsPage />
-      <div className="border-2 border-white m-4 p-4">
-        <h2>Relay Pool</h2>
-        {config.relays.map((relay: string) => <p key={relay}>{relay}</p>)}
-      </div>
+      <Sidebar />
+      <MainArea />
     </LoginLayout>
   );
 }
+
+const OldApp = () => {
+  return (
+    <>
+      <div className="mx-auto px-4 py-4">
+        <h1 className="text-2xl font-semibold text-orange-900">
+          Merchant X
+        </h1>
+        <p className="text-sm text-orange-500">
+          The Merchant Experience for Nostr Rockstars
+        </p>
+      </div>
+
+      <RelayPoolsLayout />
+      <ProductsLayout />
+      <ShippingOptionsLayout />
+
+      <footer className="mt-8">
+        <div className="mx-auto px-4 py-6">
+          <p className="text-center text-gray-500 text-sm">
+            Powered by Nostr - Kind 30402 Product Listing
+          </p>
+        </div>
+      </footer>
+    </>
+  );
+};

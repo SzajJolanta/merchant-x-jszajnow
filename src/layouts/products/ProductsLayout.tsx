@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { NostrEvent } from "@nostr-dev-kit/ndk";
 import { useProductStore } from "@/stores/useProductStore";
-import ProductLayout from "@/layouts/ProductLayout";
-import ProductDetail from "@/components/ProductDetail";
-import ProductForm from "@/components/ProductForm";
+import ProductEditorLayout from "@/layouts/products/ProductEditorLayout";
+import ProductDetail from "@/components/product/ProductDetail";
+import ProductForm from "@/components/product/ProductForm";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
-const ProductsPage: React.FC = () => {
+const ProductsLayout: React.FC = () => {
     const { createProduct, updateProduct } = useProductStore();
     const [currentView, setCurrentView] = useState<"list" | "detail" | "form">(
         "list",
@@ -93,7 +93,7 @@ const ProductsPage: React.FC = () => {
             case "list":
             default:
                 return (
-                    <ProductLayout
+                    <ProductEditorLayout
                         onViewProduct={handleViewProduct}
                         onEditProduct={handleEditProduct}
                         onCreateProduct={handleCreateProduct}
@@ -103,31 +103,12 @@ const ProductsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen">
-            <header className="">
-                <div className="container mx-auto px-4 py-4">
-                    <h1 className="text-2xl font-semibold text-gray-900">
-                        Merchant X
-                    </h1>
-                    <p className="text-sm text-gray-500">
-                        The Merchant Experience for Nostr Rockstars
-                    </p>
-                </div>
-            </header>
-
+        <div className="">
             <main>
                 {renderContent()}
             </main>
-
-            <footer className="mt-8">
-                <div className="container mx-auto px-4 py-6">
-                    <p className="text-center text-gray-500 text-sm">
-                        Powered by Nostr - Kind 30402 Product Listing
-                    </p>
-                </div>
-            </footer>
         </div>
     );
 };
 
-export default ProductsPage;
+export default ProductsLayout;

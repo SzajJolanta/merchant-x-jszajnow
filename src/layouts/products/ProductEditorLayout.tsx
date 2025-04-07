@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useProductStore } from "@/stores/useProductStore";
-import ProductCard from "@/components/ProductCard";
-import ProductForm from "@/components/ProductForm";
+import ProductCard from "@/components/product/ProductCard";
+import ProductForm from "@/components/product/ProductForm";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 
-const ProductLayout: React.FC = () => {
+const ProductEditorLayout: React.FC = () => {
     const {
         products,
         isLoading,
@@ -151,7 +151,7 @@ const ProductLayout: React.FC = () => {
 
     if (showForm) {
         return (
-            <div className="container mx-auto px-4 py-8">
+            <div className="mx-auto px-4 py-8">
                 <ProductForm
                     event={editEvent}
                     onSubmit={handleFormSubmit}
@@ -162,7 +162,7 @@ const ProductLayout: React.FC = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <h1 className="text-3xl font-bold text-gray-900">Products</h1>
 
@@ -320,9 +320,8 @@ const ProductLayout: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {productEvents.map((event) => (
                     <ProductCard
-                        key={`${
-                            ProductListingUtils.getProductId(event)
-                        }-${event.created_at}`}
+                        key={`${ProductListingUtils.getProductId(event)
+                            }-${event.created_at}`}
                         event={event}
                         onEdit={handleEditClick}
                         onDelete={handleDeleteClick}
@@ -333,4 +332,4 @@ const ProductLayout: React.FC = () => {
     );
 };
 
-export default ProductLayout;
+export default ProductEditorLayout;

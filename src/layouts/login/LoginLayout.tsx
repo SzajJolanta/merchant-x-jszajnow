@@ -18,12 +18,12 @@ export const useInitializeAuth = () => {
 
 const LoginLayout: React.FC<LoginLayoutProps> = ({ children }) => {
     useInitializeAuth();
-    const { isLoggedIn, login } = useAccountStore();
+    const { isLoggedIn, login, user } = useAccountStore();
 
-    if (!isLoggedIn) {
+    if (!isLoggedIn || !user) {
         return (
-            <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
-                <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+            <main className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
+                <section className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
                     <h1 className="text-2xl font-bold mb-4">
                         Nostr Account Required
                     </h1>
@@ -40,13 +40,13 @@ const LoginLayout: React.FC<LoginLayoutProps> = ({ children }) => {
                     >
                         Login with Nostr
                     </button>
-                </div>
-            </div>
+                </section>
+            </main>
         );
     }
 
     // User is logged in, render the children (main app content)
-    return <>{children}</>;
+    return <main className="min-h-screen">{children}</main>;
 };
 
 export default LoginLayout;
