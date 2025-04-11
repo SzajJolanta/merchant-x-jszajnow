@@ -18,27 +18,34 @@ const getSampleProduct = (): ProductListing => ({
 
 const ProductCreateLayout: React.FC = () => {
     const { createProduct } = useProductStore();
-    const [sampleData, setSampleData] = useState<ProductListing | undefined>();
-    const [submitting, setSubmitting] = useState(false);
+    const [productData, setProductData] = useState<ProductListing | undefined>();
     const [location] = useLocation();
+    const [submitting, setSubmitting] = useState(false);
 
+    // Auto-fill sample data if ?sample=true
     useEffect(() => {
         if (location.includes("sample=true")) {
-            setSampleData(getSampleProduct());
+            setProductData(getSampleProduct());
         }
     }, [location]);
 
+    // Handler for manual fill with sample button
     const handleFillSample = () => {
-        setSampleData(getSampleProduct());
+        setProductData(getSampleProduct());
     };
 
     const handleSubmit = async (tags: string[][], content: string) => {
         setSubmitting(true);
         try {
-            await createProduct({ kind: 30402, tags, content });
-            window.history.back(); // Or navigate("/products")
-        } catch (error) {
-            console.error("Failed to create product:", error);
+            await createProduct({
+                kind: 30402,
+                tags,
+                content,
+            });
+            console.log("✅ Product created");
+            window.history.back(); // or navigate("/products");
+        } catch (err) {
+            console.error("❌ Failed to create product:", err);
             // TODO: Add user-facing error message
         } finally {
             setSubmitting(false);
@@ -46,7 +53,7 @@ const ProductCreateLayout: React.FC = () => {
     };
 
     const handleCancel = () => {
-        setSampleData(undefined); // Clear form if needed
+        setProductData(undefined);
         window.history.back();
     };
 
@@ -58,13 +65,14 @@ const ProductCreateLayout: React.FC = () => {
                     onClick={handleFillSample}
                     className="btn-secondary"
                     disabled={submitting}
+                    style={'background: red'}
                 >
                     Fill with Sample Data
                 </button>
             </div>
 
             <ProductForm
-                event={sampleData}
+                event={productData}
                 onSubmit={handleSubmit}
                 onCancel={handleCancel}
                 disabled={submitting}

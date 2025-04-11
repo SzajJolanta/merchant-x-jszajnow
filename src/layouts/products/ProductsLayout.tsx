@@ -15,7 +15,9 @@ const ProductsLayout: React.FC = () => {
         deleteProduct,
     } = useProductStore();
     const [searchTerm, setSearchTerm] = useState("");
-    const [sortBy, setSortBy] = useState<"newest" | "price">("newest");
+    const [sortBy, setSortBy] = useState<
+        "newest" | "price" | "price-desc" | "title-asc" | "title-desc"
+    >("newest");
     const [, navigate] = useLocation();
 
     useEffect(() => {
@@ -23,7 +25,6 @@ const ProductsLayout: React.FC = () => {
     }, [fetchProducts]);
 
     const handleCreate = () => navigate("products/create");
-    const handleCreateSample = () => navigate("products/create?sample=true");
     const handleEdit = (product: ProductListing) => {
         const id = ProductListingUtils.getProductId(product);
         if (id) navigate(`products/edit/${id}`);
@@ -36,11 +37,27 @@ const ProductsLayout: React.FC = () => {
     });
 
     const sorted = [...filtered].sort((a, b) => {
-        if (sortBy === "newest") return (b.created_at || 0) - (a.created_at || 0);
-        const aPrice = parseFloat(a.tags.find((t) => t[0] === "price")?.[1] ?? "0");
-        const bPrice = parseFloat(b.tags.find((t) => t[0] === "price")?.[1] ?? "0");
-        return aPrice - bPrice;
-    });
+        const getPrice = (product: ProductListing) =>
+            parseFloat(product.tags.find((tag) => tag[0] === "price")?.[1] ?? "0");
+    
+        const getTitle = (product: ProductListing) =>
+            product.tags.find((tag) => tag[0] === "title")?.[1]?.toLowerCase() ?? "";
+    
+        switch (sortBy) {
+            case "newest":
+                return (b.created_at || 0) - (a.created_at || 0);
+            case "price":
+                return getPrice(a) - getPrice(b);
+            case "price-desc":
+                return getPrice(b) - getPrice(a);
+            case "title-asc":
+                return getTitle(a).localeCompare(getTitle(b));
+            case "title-desc":
+                return getTitle(b).localeCompare(getTitle(a));
+            default:
+                return 0;
+        }
+    });    
 
     const productEvents = sorted.map((p) => ({
         id: ProductListingUtils.getProductId(p) ?? "",
@@ -50,59 +67,77 @@ const ProductsLayout: React.FC = () => {
         pubkey: "",
         kind: 30402,
     }));
-    console.log("Rendering ProductsLayout"); // or CreateLayout, EditorLayout
+    console.log("Rendering ProductsLayout");
 
 
     return (
         <div className="mx-auto px-4 py-8">
             {/* Toolbar */}
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Products</h1>
-                <div className="flex gap-2">
-                    <button onClick={handleCreate} className="btn-primary">
-                        <PlusIcon className="w-4 h-4 mr-1" />
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                    {/* Search */}
+                    <div className="relative flex-grow">
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="input w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 pl-10"
+                        />
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <SearchIcon className="h-5 w-5 text-gray-400" />
+                        </div>
+                    </div>
+
+                    {/* Sort */}
+                    <select
+                        value={sortBy}
+                        onChange={(e) =>
+                            setSortBy(
+                                e.target.value as
+                                | "newest"
+                                | "price"
+                                | "price-desc"
+                                | "title-asc"
+                                | "title-desc"
+                            )
+                        }
+                        className="px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    >
+                        <option value="newest">Newest First</option>
+                        <option value="price">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="title-asc">Title: A–Z</option>
+                        <option value="title-desc">Title: Z–A</option>
+                    </select>
+
+
+
+                    {/* Add Product Button */}
+                    <button
+                        onClick={handleCreate}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-white"
+                    >
+                        <PlusIcon className="w-4 h-4 mr-2" />
                         Add Product
                     </button>
-                    <button onClick={handleCreateSample} className="btn-secondary">
-                        <PlusIcon className="w-4 h-4 mr-1" />
-                        Add Sample Product
-                    </button>
                 </div>
-            </div>
-
-            {/* Search / Sort */}
-            <div className="flex gap-4 mb-4">
-                <div className="relative flex-grow">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="input"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <div className="absolute left-3 top-2.5">
-                        <SearchIcon className="text-gray-400" />
-                    </div>
-                </div>
-                <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as "newest" | "price")}
-                    className="input"
-                >
-                    <option value="newest">Newest</option>
-                    <option value="price">Price</option>
-                </select>
             </div>
 
             {/* List */}
             {isLoading ? (
-                <div className="text-center">Loading...</div>
+                <div className="flex justify-center items-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+                    <span className="ml-3 text-lg text-gray-700">Loading products...</span>
+                </div>
             ) : error ? (
-                <div className="text-red-600">{error}</div>
+                <div className="text-center text-red-600">{error}</div>
             ) : productEvents.length === 0 ? (
                 <div className="text-center text-gray-500">No products found.</div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {productEvents.map((event) => (
                         <ProductCard
                             key={event.id}
