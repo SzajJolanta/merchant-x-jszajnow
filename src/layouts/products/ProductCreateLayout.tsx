@@ -1,37 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import ProductForm from "@/components/product/ProductForm";
 import { useProductStore } from "@/stores/useProductStore";
 import { ProductListing } from "nostr-commerce-schema";
 
-const getSampleProduct = (): ProductListing => ({
-    tags: [
-        ["title", "Sample Product"],
-        ["summary", "This is a sample product"],
-        ["price", "9.99", "USD"],
-        ["stock", "10"],
-    ],
-    content: "This is a sample product description.",
-    created_at: Math.floor(Date.now() / 1000),
-    kind: 30402,
-});
+const useSampleProduct = () => {
+    return useMemo<ProductListing>(() => ({
+        tags: [
+            ["title", "Sample Product"],
+            ["summary", "This is a sample product"],
+            ["price", "9.99", "USD"],
+            ["stock", "10"],
+        ],
+        content: "This is a sample product description.",
+        created_at: Math.floor(Date.now() / 1000),
+        kind: 30402,
+    }), []);
+};
 
 const ProductCreateLayout: React.FC = () => {
     const { createProduct } = useProductStore();
+    const sampleProduct = useSampleProduct();
     const [productData, setProductData] = useState<ProductListing | undefined>();
-    const [location] = useLocation();
+    const [, navigate] = useLocation();
     const [submitting, setSubmitting] = useState(false);
 
     // Auto-fill sample data if ?sample=true
     useEffect(() => {
-        if (location.includes("sample=true")) {
-            setProductData(getSampleProduct());
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get("sample") === "true") {
+            setProductData(sampleProduct);
         }
-    }, [location]);
+    }, [sampleProduct]);
+    
 
-    // Handler for manual fill with sample button
     const handleFillSample = () => {
-        setProductData(getSampleProduct());
+        setProductData(sampleProduct);
     };
 
     const handleSubmit = async (tags: string[][], content: string) => {
@@ -43,7 +47,7 @@ const ProductCreateLayout: React.FC = () => {
                 content,
             });
             console.log("✅ Product created");
-            window.history.back(); // or navigate("/products");
+            navigate("/products");
         } catch (err) {
             console.error("❌ Failed to create product:", err);
             // TODO: Add user-facing error message
@@ -54,7 +58,7 @@ const ProductCreateLayout: React.FC = () => {
 
     const handleCancel = () => {
         setProductData(undefined);
-        window.history.back();
+        navigate("/products");
     };
 
     return (

@@ -1,10 +1,12 @@
-// ProductsLayout.tsx (formerly ProductEditorLayout.tsx)
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useProductStore } from "@/stores/useProductStore";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductListing, ProductListingUtils } from "nostr-commerce-schema";
 import { useLocation } from "wouter";
 import { PlusIcon, SearchIcon } from "@/components/icons/icons";
+
+const getTagValue = (tags: string[][], key: string): string =>
+    tags.find((tag) => tag[0] === key)?.[1] ?? "";
 
 const ProductsLayout: React.FC = () => {
     const {
@@ -14,6 +16,7 @@ const ProductsLayout: React.FC = () => {
         fetchProducts,
         deleteProduct,
     } = useProductStore();
+    
     const [searchTerm, setSearchTerm] = useState("");
     const [sortBy, setSortBy] = useState<
         "newest" | "price" | "price-desc" | "title-asc" | "title-desc"
@@ -25,50 +28,56 @@ const ProductsLayout: React.FC = () => {
     }, [fetchProducts]);
 
     const handleCreate = () => navigate("products/create");
+    const handleSampleCreate = () => navigate("products/create?sample=true");
+
     const handleEdit = (product: ProductListing) => {
         const id = ProductListingUtils.getProductId(product);
         if (id) navigate(`products/edit/${id}`);
     };
 
-    const filtered = Array.from(products.values()).filter((p) => {
-        const title = p.tags.find((t) => t[0] === "title")?.[1] ?? "";
-        const summary = p.tags.find((t) => t[0] === "summary")?.[1] ?? "";
-        return `${title} ${summary} ${p.content}`.toLowerCase().includes(searchTerm.toLowerCase());
-    });
+    const filteredProducts = useMemo(() => {
+        return Array.from(products.values()).filter((p) => {
+            const title = getTagValue(p.tags, "title");
+            const summary = getTagValue(p.tags, "summary");
+            return `${title} ${summary} ${p.content}`.toLowerCase().includes(searchTerm.toLowerCase());
+        });
+    }, [products, searchTerm]);
 
-    const sorted = [...filtered].sort((a, b) => {
+    const sortedProducts = useMemo(() => {
         const getPrice = (product: ProductListing) =>
-            parseFloat(product.tags.find((tag) => tag[0] === "price")?.[1] ?? "0");
-    
+            parseFloat(getTagValue(product.tags, "price") || "0");
+
         const getTitle = (product: ProductListing) =>
-            product.tags.find((tag) => tag[0] === "title")?.[1]?.toLowerCase() ?? "";
-    
-        switch (sortBy) {
-            case "newest":
-                return (b.created_at || 0) - (a.created_at || 0);
-            case "price":
-                return getPrice(a) - getPrice(b);
-            case "price-desc":
-                return getPrice(b) - getPrice(a);
-            case "title-asc":
-                return getTitle(a).localeCompare(getTitle(b));
-            case "title-desc":
-                return getTitle(b).localeCompare(getTitle(a));
-            default:
-                return 0;
-        }
-    });    
+            getTagValue(product.tags, "title").toLowerCase();
 
-    const productEvents = sorted.map((p) => ({
-        id: ProductListingUtils.getProductId(p) ?? "",
-        content: p.content,
-        tags: p.tags,
-        created_at: p.created_at,
-        pubkey: "",
-        kind: 30402,
-    }));
-    console.log("Rendering ProductsLayout");
+        return [...filteredProducts].sort((a, b) => {
+            switch (sortBy) {
+                case "newest":
+                    return (b.created_at || 0) - (a.created_at || 0);
+                case "price":
+                    return getPrice(a) - getPrice(b);
+                case "price-desc":
+                    return getPrice(b) - getPrice(a);
+                case "title-asc":
+                    return getTitle(a).localeCompare(getTitle(b));
+                case "title-desc":
+                    return getTitle(b).localeCompare(getTitle(a));
+                default:
+                    return 0;
+            }
+        });
+    }, [filteredProducts, sortBy]);
 
+    const productEvents = useMemo(() => {
+        return sortedProducts.map((p) => ({
+            id: ProductListingUtils.getProductId(p) ?? "",
+            content: p.content,
+            tags: p.tags,
+            created_at: p.created_at,
+            pubkey: "",
+            kind: 30402,
+        }));
+    }, [sortedProducts]);
 
     return (
         <div className="mx-auto px-4 py-8">
@@ -97,11 +106,11 @@ const ProductsLayout: React.FC = () => {
                         onChange={(e) =>
                             setSortBy(
                                 e.target.value as
-                                | "newest"
-                                | "price"
-                                | "price-desc"
-                                | "title-asc"
-                                | "title-desc"
+                                    | "newest"
+                                    | "price"
+                                    | "price-desc"
+                                    | "title-asc"
+                                    | "title-desc"
                             )
                         }
                         className="px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
@@ -113,8 +122,6 @@ const ProductsLayout: React.FC = () => {
                         <option value="title-desc">Title: Z–A</option>
                     </select>
 
-
-
                     {/* Add Product Button */}
                     <button
                         onClick={handleCreate}
@@ -122,6 +129,14 @@ const ProductsLayout: React.FC = () => {
                     >
                         <PlusIcon className="w-4 h-4 mr-2" />
                         Add Product
+                    </button>
+                    {/* Add Product Button */}
+                    <button
+                        onClick={handleSampleCreate}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-white"
+                    >
+                        <PlusIcon className="w-4 h-4 mr-2" />
+                        Add Sample Product
                     </button>
                 </div>
             </div>
