@@ -19,6 +19,7 @@ const getSampleProduct = (): ProductListing => ({
 const ProductCreateLayout: React.FC = () => {
     const { createProduct } = useProductStore();
     const [sampleData, setSampleData] = useState<ProductListing | undefined>();
+    const [submitting, setSubmitting] = useState(false);
     const [location] = useLocation();
 
     useEffect(() => {
@@ -27,14 +28,27 @@ const ProductCreateLayout: React.FC = () => {
         }
     }, [location]);
 
-    const handleFillSample = () => setSampleData(getSampleProduct());
-    const handleSubmit = async (tags: string[][], content: string) => {
-        await createProduct({ kind: 30402, tags, content });
-        window.history.back();
+    const handleFillSample = () => {
+        setSampleData(getSampleProduct());
     };
 
-    console.log("Rendering ProductsCreateLayout"); // or CreateLayout, EditorLayout
+    const handleSubmit = async (tags: string[][], content: string) => {
+        setSubmitting(true);
+        try {
+            await createProduct({ kind: 30402, tags, content });
+            window.history.back(); // Or navigate("/products")
+        } catch (error) {
+            console.error("Failed to create product:", error);
+            // TODO: Add user-facing error message
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
+    const handleCancel = () => {
+        setSampleData(undefined); // Clear form if needed
+        window.history.back();
+    };
 
     return (
         <div className="mx-auto px-4 py-8 max-w-2xl">
@@ -43,15 +57,24 @@ const ProductCreateLayout: React.FC = () => {
                 <button
                     onClick={handleFillSample}
                     className="btn-secondary"
+                    disabled={submitting}
                 >
                     Fill with Sample Data
                 </button>
             </div>
+
             <ProductForm
                 event={sampleData}
                 onSubmit={handleSubmit}
-                onCancel={() => window.history.back()}
+                onCancel={handleCancel}
+                disabled={submitting}
             />
+
+            {submitting && (
+                <div className="text-center mt-4 text-sm text-gray-600">
+                    Submitting product...
+                </div>
+            )}
         </div>
     );
 };
